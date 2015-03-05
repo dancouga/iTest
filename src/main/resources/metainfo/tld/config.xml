@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<taglib>
+		<taglib-uri>http://www.cht.com.tw/iTest</taglib-uri>
+		<taglib-location>/metainfo/tld/iTest.tld</taglib-location>
+	</taglib>
+</config>

@@ -1,0 +1,24 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.TestCaseViewModel')" validationMessages="@id('vmsgs')" width="600px" vflex="1">
+		<textbox value="@save(vm.caseName)" placeholder="Input node name..." />
+		<button label="Add trunk" disabled="@load(!vm.canAddTrunk)" onClick="@command('addCase', type='trunk')" />
+		<button label="Add leaf" disabled="@load(!vm.canAddLeaf)" onClick="@command('addCase', type='leaf')" />
+		<button label="Delect node" disabled="@load(!vm.deleteAddNode)" onClick="@command('deleteCase')" />
+		<tree model="@bind(vm.treeModel)" onSelect="@command('selectNode')">
+			<treecols>
+				<treecol label="Name" />
+				<treecol label="Action" />
+				<treecol label="Description" />
+			</treecols>
+			<template name="model">
+				<treeitem open="true">
+					<treerow label="${each}">
+						<treecell label="${each}" />
+						<treecell label="${each}" />
+					</treerow>
+				</treeitem>
+			</template>
+		</tree>
+	</window>
+</zk>

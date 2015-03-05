@@ -1,0 +1,75 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.cht.com.tw/iTest" prefix="iTest" ?>
+<zk>
+	<window apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.TestPlanViewModel')" validationMessages="@id('vmsgs')" hflex="1" vflex="1">
+		<borderlayout hflex="1" vflex="1">
+			<east title="Snapshot" splittable="true" collapsible="true" width="25%">
+				<image content="@bind(vm.image)" hflex="1" />
+			</east>
+			<center title="Tese Plan">
+				<tabbox orient="bottom" hflex="1" vflex="1">
+					<tabs children="@load(vm.caseNames)" hflex="1" vflex="1">
+						<template name="children">
+							<tab label="@load(each)" draggable="true" droppable="true" onDrop="@command('changeExecSeq',drop=event)" />
+						</template>
+					</tabs>
+					<tabpanels children="@load(vm.testCaseModel)" hflex="1" vflex="1">
+						<template name="children">
+							<tabpanel>
+								<listbox model="@bind(each)" onSelect="@command('viewSnapshot')" selectedItem="@bind(vm.selected)" sizedByContent="true" checkmark="true" hflex="1" vflex="1">
+									<listhead sizable="true">
+										<listheader label="" width="30px" align="center" />
+										<listheader label="name" width="100px" align="center" />
+										<listheader label="action" width="80px" align="center" />
+										<listheader label="sync" width="60px" align="center" />
+										<listheader label="element" width="200px" align="center" />
+										<listheader label="findMethod" width="110px" align="center" />
+										<listheader label="inputValue" width="200px" align="center" />
+										<listheader label="snapshot" width="80px" align="center" />
+										<listheader label="description" hflex="1" align="center" />
+									</listhead>
+									<template name="model">
+										<listitem>
+											<listcell />
+											<listcell>
+												<textbox value="@bind(each.name)" inplace="true" hflex="1" />
+											</listcell>
+											<listcell>
+												<combobox model="${iTest:enumModel('com.cht.iTest.def.Action')}" selectedItem="@bind(each.action)" inplace="true" hflex="1" />
+											</listcell>
+											<listcell>
+												<combobox model="${iTest:enumModel('com.cht.iTest.def.Sync')}" selectedItem="@bind(each.sync)" inplace="true" hflex="1" />
+											</listcell>
+											<listcell>
+												<textbox value="@bind(each.element)" inplace="true" hflex="1" />
+											</listcell>
+											<listcell>
+												<combobox model="${iTest:enumModel('com.cht.iTest.def.FindMethod')}" selectedItem="@bind(each.findMethod)" inplace="true" hflex="1" />
+											</listcell>
+											<listcell>
+												<textbox value="@bind(each.inputValue)" inplace="true" hflex="1" />
+											</listcell>
+											<listcell>
+												<combobox model="${iTest:enumModel('com.cht.iTest.def.Snapshot')}" selectedItem="@bind(each.snapshot)" inplace="true" hflex="1" />
+											</listcell>
+											<listcell>
+												<textbox value="@bind(each.description)" inplace="true" hflex="1" />
+											</listcell>
+										</listitem>
+									</template>
+								</listbox>
+							</tabpanel>
+						</template>
+					</tabpanels>
+				</tabbox>
+			</center>
+			<south border="none">
+				<toolbar>
+					<button label="Execute Test Case" disabled="@load(empty vm.testCaseModel)" onClick="@command('execute')" />
+					<button label="create Test Plan" onClick="@command('create')" />
+					<button label="Upload Test Plan" upload="true" onUpload="@command('uploadTestCase',upload=event)" />
+				</toolbar>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

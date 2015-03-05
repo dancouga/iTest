@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib>
+	<uri>http://www.cht.com.tw/iTest</uri>
+	<description>
+	</description>
+	<function>
+		<name>enumModel</name>
+		<function-class>com.cht.iTest.util.ZKUtils</function-class>
+		<function-signature>
+			org.zkoss.zul.ListModel createListEnumModel(java.lang.String enumClassName)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+</taglib>
