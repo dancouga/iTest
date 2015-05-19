@@ -1,0 +1,73 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.cht.com.tw/iTest" prefix="iTest" ?>
+<zk>
+	<window id="processWin" title="測試計畫執行監視" binder="@init(queueName='myqueue')" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.ProcessViewModel')"
+		maximizable="true" maximized="true" minheight="600" minwidth="1024" mode="modal">
+		<borderlayout hflex="1" vflex="1">
+			<west border="none" splittable="true" collapsible="true" width="400px">
+				<borderlayout hflex="1" vflex="1">
+					<north border="none" title="測試行程變數設定" collapsible="true" splittable="true" height="40%">
+						<vlayout hflex="1" vflex="1">
+							<listbox model="@bind(vm.executeContextParam)" emptyMessage="No Parameter" hflex="1" vflex="1">
+								<listhead>
+									<listheader label="變數名稱" align="center" hflex="1" />
+									<listheader label="賦值" align="center" hflex="2" />
+								</listhead>
+								<template name="model">
+									<listitem>
+										<listcell label="@load(each[0])" />
+										<listcell>
+											<textbox value="@bind(each[1])" hflex="1" disabled="@load(vm.run)" />
+										</listcell>
+									</listitem>
+								</template>
+							</listbox>
+							<hlayout hflex="1">
+								<space width="10px" />
+								<label value="執行進度" />
+								<progressmeter value="@load(vm.process)" hflex="1" />
+								<label value="@load(vm.process)" />
+								<label value="%" />
+								<space width="10px" />
+							</hlayout>
+						</vlayout>
+					</north>
+					<center border="none" title="待執行測試步驟清單" vflex="1">
+						<listbox model="@bind(vm.queue)" hflex="1" vflex="1" onSelect="@command('viewSnapshot')" selectedItem="@bind(vm.selected)">
+							<listhead>
+								<listheader label="案例名稱" style="text-align:center" width="150px" />
+								<listheader label="步驟名稱" style="text-align:center" width="150px" />
+								<listheader label="執行狀態" style="text-align:center" width="80px" />
+							</listhead>
+							<template name="model">
+								<listitem>
+									<listcell label="@load(each.testCase.name)" />
+									<listcell label="@load(each.name)" />
+									<listcell label="@load(each.exeStatus)" style="@load(iTest:statusCss(each.exeStatus))" />
+								</listitem>
+							</template>
+						</listbox>
+					</center>
+					<south border="none">
+						<toolbar hflex="1" align="center">
+							<button label="開始" image="/imgs/start.png" disabled="@load(vm.run)" onClick="@command('start')" />
+							<button label="停止" image="/imgs/stop.png" disabled="@load(!vm.run)" onClick="@command('stop')" />
+							<button label="離開" image="/imgs/exit.png" disabled="@load(vm.run)" onClick="@command('exit')" />
+							<button label="產製結果報表" image="/imgs/exit.png" onClick="@command('testReport')" visible="false" />
+						</toolbar>
+					</south>
+				</borderlayout>
+			</west>
+			<center border="none">
+				<borderlayout hflex="1" vflex="1">
+					<center title="測試截圖" border="none" autoscroll="true" style="background-color:lightyellow">
+						<image content="@bind(vm.image)" hflex="1" />
+					</center>
+					<south title="錯誤訊息" height="45%" splittable="true" autoscroll="true" collapsible="true" border="none" style="background-color:lightyellow">
+						<label value="@bind(vm.errorMsg)" pre="true" />
+					</south>
+				</borderlayout>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,6 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<hbox sclass="login" hflex="1" height="24px" align="center" pack="center">
+		<label value="Copyright © 2015 Chunghwa Telecom Co. Ltd.All rights reserved" style="font-family:cursive;font-size:14px" />
+	</hbox>
+</zk>

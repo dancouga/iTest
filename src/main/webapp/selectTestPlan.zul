@@ -1,0 +1,11 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="planSelectWin" mode="modal" width="400px" title="請選擇一筆測試計畫" closable="true" border="normal" apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm')@init('com.cht.iTest.vm.SelectTestPlanViewModel')">
+		<hlayout hflex="1">
+			<listbox mold="select" model="@bind(vm.testPlans)" hflex="1" />
+			<button label="選擇" onClick="@command('confirm',win=planSelectWin)" image="/imgs/ok.png" width="70px"/>
+			<button label="刪除" onClick="@command('delete')" image="/imgs/delete.png" width="70px"/>
+		</hlayout>
+	</window>
+</zk>

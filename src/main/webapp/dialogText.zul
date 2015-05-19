@@ -1,0 +1,11 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="dialogWin" title="@load(vm.title)" apply="org.zkoss.bind.BindComposer" width="400px" closable="true" viewModel="@id('vm')@init('com.cht.iTest.vm.DialogTextViewModel')"
+		border="normal">
+		<hlayout hflex="1">
+			<textbox value="@bind(vm.value)" hflex="1" constraint="no empty"/>
+			<button label="確定" image="/imgs/ok.png" onClick="@command('confirm',dialogWin=dialogWin)" />
+			<space width="10px"/>
+		</hlayout>
+	</window>
+</zk>

@@ -1,0 +1,14 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window mode="modal" closable="true" border="normal" width="640px" height="480px" maximizable="true">
+		<caption>
+				<label>【JDBC_URL=jdbc:h2:./db/itest】</label>
+				<space width="30px" />
+				<label>【USER_NAME=test】</label>
+				<space width="30px" />
+				<label>【PASSWORD=1234】</label>
+				http://${execution.nativeRequest.localName}:8082
+		</caption>
+		<iframe src="http://localhost:8082" hflex="1" vflex="1" />
+	</window>
+</zk>

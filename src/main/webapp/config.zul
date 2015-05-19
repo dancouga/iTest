@@ -1,0 +1,45 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window border="normal" closable="true" maximizable="true" minheight="880" minwidth="400" sizable="true" title="參數設定" apply="org.zkoss.bind.BindComposer" id="paramterSettingWin" viewModel="@id('vm')@init('com.cht.iTest.vm.ConfigViewModel')"
+		width="880px" height="400px" >
+		<vlayout vflex="1" hflex="1">
+			<hlayout hflex="1">
+				名稱:
+				<textbox hflex="1" value="@bind(vm.name)" placeholder="請輸入參數名稱" />
+				值:
+				<textbox hflex="2" value="@bind(vm.value)" placeholder="請輸入參數值" />
+				敘述:
+				<textbox hflex="1" value="@bind(vm.description)" placeholder="請輸入參數敘述" />
+				<button image="/imgs/add.png" label="新增" onClick="@command('add')" />
+			</hlayout>
+			<listbox model="@bind(vm.listModel)" vflex="1" hflex="1">
+				<listhead sizable="true">
+					<listheader hflex="1" label="參數名稱" />
+					<listheader hflex="3" label="參數值" />
+					<listheader hflex="2" label="敘述" />
+					<listheader hflex="1" label="刪除" />
+				</listhead>
+				<template name="model">
+					<listitem>
+						<listcell>
+							<textbox value="@bind(each.name)" hflex="1" inplace="true" />
+						</listcell>
+						<listcell>
+							<textbox value="@bind(each.value)" hflex="1" inplace="true" />
+						</listcell>
+						<listcell>
+							<textbox value="@bind(each.description)" hflex="1" inplace="true" />
+						</listcell>
+						<listcell>
+							<button label="刪除"  image="/imgs/delete.png" onClick="@command('delete', param=each)" />
+						</listcell>
+					</listitem>
+				</template>
+			</listbox>
+			<toolbar align="center">
+				<button label="儲存" image="/imgs/save.png" onClick="@command('save',win=paramterSettingWin)" />
+				<button label="離開" image="/imgs/exit.png" onClick="paramterSettingWin.detach();" />
+			</toolbar>
+		</vlayout>
+	</window>
+</zk>
