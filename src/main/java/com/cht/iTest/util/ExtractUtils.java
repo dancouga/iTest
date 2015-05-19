@@ -43,6 +43,7 @@ public class ExtractUtils {
 
 		return (Map<K, V>) map;
 	}
+	
 
 	public static <K, V, P> Map<K, V> extract2Map(Collection<P> collection, MapEntry<K, V, P> extractor) {
 		Map<K, V> map = new LinkedHashMap<K, V>();

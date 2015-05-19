@@ -105,24 +105,26 @@ public class POIUtils {
 		return map;
 	}
 
-	public static <T> byte[] toXlsByteAry(List<T> datas, Bean2XlsConvertor<T> convertor) throws IOException {
-
+	public static <T> byte[] toXlsByteAry(Map<String, List<T>> datas, Bean2XlsConvertor<T> convertor) throws IOException {
 		Workbook workbook = new HSSFWorkbook();
-		Sheet sheet = workbook.createSheet(convertor.sheetName());
 		CellStyle headStyle = createHeadStyle(workbook);
 		CellStyle cellStyle = createCellStyle(workbook);
-		int pos = 0;
 
-		if (convertor.header() != null) {
-			createRow(sheet, headStyle, convertor.header(), pos++);
-		}
+		for (Entry<String, List<T>> entry : datas.entrySet()) {
+			Sheet sheet = workbook.createSheet(entry.getKey());
+			int pos = 0;
 
-		for (T bean : datas) {
-			createRow(sheet, cellStyle, convertor.process(bean), pos++);
-		}
+			if (convertor.header() != null) {
+				createRow(sheet, headStyle, convertor.header(), pos++);
+			}
 
-		for (short i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
-			sheet.autoSizeColumn(i);
+			for (T bean : entry.getValue()) {
+				createRow(sheet, cellStyle, convertor.process(bean), pos++);
+			}
+			
+			for (short i = 0; i <= convertor.header().length; i++) {
+				sheet.autoSizeColumn(i);
+			}
 		}
 
 		return toByteAry(workbook);
@@ -205,7 +207,7 @@ public class POIUtils {
 				if (flag++ < convertor.startIndex()) {
 					continue;
 				}
-				
+
 				bean = convertor.process(row);
 
 				if (bean == null) {
@@ -267,29 +269,6 @@ public class POIUtils {
 
 		return toByteAry(workbook);
 	}
-
-//	private static void addSheetRows(Sheet sheet, List<String[]> rows) throws IOException {
-//		int rownum = 1;
-//		int cellnum = 0;
-//
-//		for (String[] dataAry : rows) {
-//			Row row = sheet.createRow(rownum++);
-//			cellnum = 0;
-//
-//			for (String data : dataAry) {
-//				row.createCell(cellnum++).setCellValue(data);
-//			}
-//		}
-//	}
-//
-//	private static void addSheetHeaders(Sheet sheet, String[] headers) throws IOException {
-//		int cellnum = 0;
-//		Row row = sheet.createRow(0);
-//
-//		for (String data : headers) {
-//			row.createCell(cellnum++).setCellValue(data);
-//		}
-//	}
 
 	private static <T> byte[] toByteAry(Workbook workbook) throws IOException {
 		ByteArrayOutputStream baos = null;
@@ -360,8 +339,6 @@ public class POIUtils {
 		String[] process(T bean);
 
 		String[] header();
-
-		String sheetName();
 
 	}
 

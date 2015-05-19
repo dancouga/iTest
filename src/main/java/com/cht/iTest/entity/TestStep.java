@@ -1,22 +1,24 @@
 package com.cht.iTest.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import com.cht.iTest.def.Action;
 import com.cht.iTest.def.FindMethod;
+import com.cht.iTest.def.Skip;
 import com.cht.iTest.def.Snapshot;
+import com.cht.iTest.def.Status;
 import com.cht.iTest.def.Sync;
 
-
-
 @Entity
-public class TestStep implements Serializable, Cloneable {
+public class TestStep implements TestNode, Serializable, Cloneable {
 
 	private static final long serialVersionUID = -1642197244518067803L;
 
@@ -27,16 +29,32 @@ public class TestStep implements Serializable, Cloneable {
 	private String name;
 	private Sync sync = Sync.Y;
 	private Snapshot snapshot = Snapshot.N;
-	private Action action;
-	private FindMethod findMethod;
+	private Action action = Action.input;
+	private FindMethod findMethod = FindMethod.id;
 	private String inputValue;
 	private String element;
 	private String description;
-	private String caseName;
 	private Integer execOrder;
 
+	@ManyToOne
+	private TestCase testCase;
+
+	@Transient
+	private Skip skip = Skip.N;
 	@Transient
 	private byte[] snapshotImg;
+	@Transient
+	private String errorMsg;
+	@Transient
+	private Status exeStatus = Status.Ready;
+
+	public Status getExeStatus() {
+		return exeStatus;
+	}
+
+	public void setExeStatus(Status exeStatus) {
+		this.exeStatus = exeStatus;
+	}
 
 	public byte[] getSnapshotImg() {
 		return snapshotImg;
@@ -44,14 +62,6 @@ public class TestStep implements Serializable, Cloneable {
 
 	public void setSnapshotImg(byte[] snapshotImg) {
 		this.snapshotImg = snapshotImg;
-	}
-
-	public String getCaseName() {
-		return caseName;
-	}
-
-	public void setCaseName(String caseName) {
-		this.caseName = caseName;
 	}
 
 	public Integer getExecOrder() {
@@ -133,5 +143,35 @@ public class TestStep implements Serializable, Cloneable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public Skip getSkip() {
+		return skip;
+	}
+
+	public void setSkip(Skip skip) {
+		this.skip = skip;
+	}
+
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
+
+	public TestCase getTestCase() {
+		return testCase;
+	}
+
+	public void setTestCase(TestCase testCase) {
+		this.testCase = testCase;
+	}
+
+	@Override
+	public List<? extends TestNode> getChildren() {
+		return null;
+	}
+
 
 }

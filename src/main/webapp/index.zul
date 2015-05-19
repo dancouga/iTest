@@ -1,31 +1,143 @@
+<?page title="iTest" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.cht.com.tw/iTest" prefix="iTest" ?>
+<?component name="copyright" macroURI="/copyright.zul" ?>
 <zk>
-	<window apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.MyViewModel')" validationMessages="@id('vmsgs')" width="600px" vflex="1">
-		<vlayout>
-			<hbox align="center" hflex="1">
-				Log message:
-				<textbox value="@save(vm.message)" onOK="@command('addLog')" hflex="1" placeholder="What happened?" />
-				<button label="add" onClick="@command('addLog')" />
-			</hbox>
-			<listbox model="@bind(vm.logListModel)" rows="10">
-				<listhead>
-					<listheader hflex="min" />
-					<listheader hflex="min" />
-					<listheader />
-				</listhead>
-				<template name="model">
-					<listitem>
-						<listcell>
-							<button label="delete" onClick="@command('deleteLog', log=each)" />
-						</listcell>
-						<listcell>
-							<label value="@bind(each.date) @converter('formattedDate', format='yyyy/MM/dd HH:mm:ss')" />
-						</listcell>
-						<listcell>
-							<label value="@bind(each.message)" />
-						</listcell>
-					</listitem>
-				</template>
-			</listbox>
-		</vlayout>
-	</window>
+	<style src="/css/theme-silvertail.css" />
+	<borderlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.TestPlanViewModel')" hflex="1" vflex="1">
+		<north border="none">
+			<menubar>
+				<menu image="/imgs/plan.png" label="測試計畫">
+					<menupopup>
+						<menuitem label="建立新計畫" image="/imgs/file_new.png" disabled="@load(vm.testPlan ne null)" onClick="@command('modifyTestPlan',modifyType='create')" />
+						<menuitem label="載入既有計畫" image="/imgs/load.png" disabled="@load(vm.testPlan ne null)" onClick="@command('selectPlan')" />
+						<menuitem label="匯入" image="/imgs/file_import.png" onClick="@command('uploadTestCase')" />
+						<menuitem label="匯出" image="/imgs/file_export.png" disabled="@load(vm.testPlan eq null)" onClick="@command('exportTestPlan')" />
+						<menuitem label="範例" image="/imgs/example.png" onClick="@command('exampleImport')" />
+						<menuseparator />
+						<menuitem label="執行" image="/imgs/play.png" disabled="@load(vm.testPlan eq null)" onClick="@command('execute')" />
+						<menuitem label="儲存" image="/imgs/save.png" disabled="@load(vm.testPlan eq null)" onClick="@command('saveTestPlan')" />
+						<menuitem label="另存新檔" image="/imgs/save.png" disabled="@load(vm.testPlan eq null)" onClick="@command('saveAsNewOne')" />
+						<menuitem label="清除" image="/imgs/deleteAll.png" disabled="@load(vm.testPlan eq null)" onClick="@command('clearAllCase')" />
+					</menupopup>
+				</menu>
+				<menu image="/imgs/setting.png" label="設定">
+					<menupopup>
+						<menu image="/imgs/screen.png" label="截圖解析度">
+							<menupopup>
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq 'FullScreen')" label="全螢幕" onClick="@command('selectDriverSize',size='FullScreen')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1024X768')" label="1024X768" onClick="@command('selectDriverSize',size='1024X768')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1280X768')" label="1280X768" onClick="@command('selectDriverSize',size='1280X768')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1280X1024')" label="1280X1024" onClick="@command('selectDriverSize',size='1280X1024')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1366X768')" label="1366X768" onClick="@command('selectDriverSize',size='1366X768')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1440X900')" label="1440X900" onClick="@command('selectDriverSize',size='1440X900')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1440X1050')" label="1440X1050" onClick="@command('selectDriverSize',size='1440X1050')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1680X1050')" label="1680X1050" onClick="@command('selectDriverSize',size='1680X1050')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1600X1200')" label="1600X1200" onClick="@command('selectDriverSize',size='1600X1200')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1920X1080')" label="1920X1080" onClick="@command('selectDriverSize',size='1920X1080')" />
+								<menuitem checkmark="true" checked="@load(vm.driverSize eq '1920X1200')" label="1920X1200" onClick="@command('selectDriverSize',size='1920X1200')" />
+							</menupopup>
+						</menu>
+						<menu image="/imgs/driverType.png" label="測試Drvier類型">
+							<menupopup>
+								<menuitem checkmark="true" checked="@load(vm.driverType eq 'Internet Explorer')" label="Internet Explorer"
+									onClick="@command('selectDriverType',type='Internet Explorer')" />
+								<menuitem checkmark="true" checked="@load(vm.driverType eq 'Chrome')" label="Chrome" onClick="@command('selectDriverType',type='Chrome')" />
+								<menuitem checkmark="true" checked="@load(vm.driverType eq 'Firefox')" label="Firefox" onClick="@command('selectDriverType',type='Firefox')" />
+							</menupopup>
+						</menu>
+						<menuitem image="/imgs/config.png" label="系統參數設定" onClick="@command('parameterSetting')" />
+					</menupopup>
+				</menu>
+				<menuitem label="Embedded DB" onClick="@command('linkToH2')" />
+				<menuitem visible="@load(vm.testPlan ne null)" label="@load(vm.testPlan.name)" style="border:black 1px solid;" context="editPlan" />
+			</menubar>
+		</north>
+		<center>
+			<tabbox orient="bottom" hflex="1" vflex="1" sclass="my">
+				<tabs children="@load(vm.testPlan.testCaseDetails)" hflex="1" vflex="1">
+					<template name="children">
+						<tab selected="@load(each eq vm.tabName)" label="@load(each.name)" draggable="case" droppable="case,step"
+							onDrop="@command('changeCaseExecSeq', drop=event, index=forEachStatus.index)" onClick="@command('tabName', testCase=each)" 
+							onClose="@command('reomveCase', index=forEachStatus.index, evt=event)"
+							closable="true" context="editCase" onRightClick="@command('tabName', testCase=each)" />
+					</template>
+				</tabs>
+				<toolbar visible="@load(vm.testPlan ne null)">
+					<menupopup id="editPlan">
+						<menuitem label="修改計畫名稱" image="/imgs/edit.png" onClick="@command('modifyTestPlan',modifyType='update')" />
+					</menupopup>
+					<menupopup id="editCase">
+						<menuitem label="修改案例名稱" image="/imgs/edit.png" onClick="@command('modifyTestCase',modifyType='update')" />
+					</menupopup>
+					<menupopup id="startFromMe">
+						<menuitem label="承接上次測試變數資料由此步驟開始" image="/imgs/play.png" onClick="@command('execute')" />
+					</menupopup>
+					<button label="Copy From..." image="/imgs/start.png" onClick="@command('copyFrom')" visible="false"/>
+					<button label="執行簡易測試" image="/imgs/start.png" onClick="@command('easyStart')" />
+					<button label="新增測試步驟" onClick="@command('createTestStep')" />
+					<button label="刪除測試步驟" onClick="@command('deleteTestSteps')" />
+					<button label="新增測試案例" image="/imgs/add.png" onClick="@command('modifyTestCase',modifyType='create')" />
+					<button label="儲存測試計畫" image="/imgs/save.png" onClick="@command('saveTestPlan')" />
+				</toolbar>
+				<tabpanels children="@load(vm.testPlan.testCaseDetails)" hflex="1" vflex="1" style="border:none;">
+					<template name="children">
+						<tabpanel>
+							<listbox checkmark="true" model="@bind(each.testSteps)" multiple="true" hflex="1" vflex="1" sizedByContent="true">
+								<listhead sizable="true">
+									<listheader label="" width="30px" align="center" />
+									<listheader label="Seq" width="40px" align="center" />
+									<listheader label="Name" hflex="1" align="center" />
+									<listheader label="Skip" width="60px" align="center" />
+									<listheader label="Action" width="80px" align="center" />
+									<listheader label="Sync" width="60px" align="center" />
+									<listheader label="Element" width="200px" align="center" />
+									<listheader label="FindMethod" width="110px" align="center" />
+									<listheader label="InputValue" width="200px" align="center" />
+									<listheader label="Snapshot" width="80px" align="center" />
+									<listheader label="Description" hflex="1" align="center" />
+								</listhead>
+								<template name="model">
+									<listitem draggable="step" droppable="step" onDrop="@command('changeStepExecSeq',drop=event,dropObj=each)" context="startFromMe">
+										<listcell />
+										<listcell label="@bind(each.execOrder+1)" />
+										<listcell>
+											<textbox value="@bind(each.name)" inplace="true" hflex="1" />
+										</listcell>
+										<listcell>
+											<listbox mold="select" model="${iTest:enumModel('com.cht.iTest.def.Skip')}" selectedItem="@bind(each.skip)" hflex="1" />
+										</listcell>
+										<listcell>
+											<listbox mold="select" model="${iTest:enumModel('com.cht.iTest.def.Action')}" selectedItem="@bind(each.action)" hflex="1" />
+										</listcell>
+										<listcell>
+											<listbox mold="select" model="${iTest:enumModel('com.cht.iTest.def.Sync')}" selectedItem="@bind(each.sync)" hflex="1" />
+										</listcell>
+										<listcell>
+											<textbox value="@bind(each.element)" inplace="true" hflex="1" />
+										</listcell>
+										<listcell>
+											<listbox mold="select" model="${iTest:enumModel('com.cht.iTest.def.FindMethod')}" selectedItem="@bind(each.findMethod)" hflex="1" />
+										</listcell>
+										<listcell>
+											<textbox value="@bind(each.inputValue)" inplace="true" hflex="1" />
+										</listcell>
+										<listcell>
+											<listbox mold="select" model="${iTest:enumModel('com.cht.iTest.def.Snapshot')}" selectedItem="@bind(each.snapshot)" hflex="1" />
+										</listcell>
+										<listcell>
+											<textbox value="@bind(each.description)" inplace="true" hflex="1" />
+										</listcell>
+									</listitem>
+								</template>
+							</listbox>
+						</tabpanel>
+					</template>
+				</tabpanels>
+			</tabbox>
+		</center>
+		<south>
+			<copyright hflex="1" />
+		</south>
+	</borderlayout>
+
 </zk>

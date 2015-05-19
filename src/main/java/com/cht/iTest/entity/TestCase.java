@@ -1,19 +1,21 @@
 package com.cht.iTest.entity;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
 @Entity
-public class TestCase implements Serializable, Cloneable {
+public class TestCase implements TestNode, Serializable, Cloneable {
 
 	private static final long serialVersionUID = 7072039515440680617L;
 
@@ -21,10 +23,14 @@ public class TestCase implements Serializable, Cloneable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long Id;
 	private String name;
+	private Integer execOrder = Integer.valueOf(0);
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "testCase")
+	@ManyToOne
+	private TestPlan testPlan;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "testCase", fetch = FetchType.EAGER, orphanRemoval = true)
 	@OrderBy("execOrder")
-	private Set<TestCaseDetail> testCaseDetails = new LinkedHashSet<TestCaseDetail>();
+	private List<TestStep> testSteps = new ArrayList<TestStep>();
 
 	public Long getId() {
 		return Id;
@@ -40,6 +46,35 @@ public class TestCase implements Serializable, Cloneable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getExecOrder() {
+		return execOrder;
+	}
+
+	public void setExecOrder(Integer execOrder) {
+		this.execOrder = execOrder;
+	}
+
+	public TestPlan getTestPlan() {
+		return testPlan;
+	}
+
+	public void setTestPlan(TestPlan testPlan) {
+		this.testPlan = testPlan;
+	}
+
+	public List<TestStep> getTestSteps() {
+		return testSteps;
+	}
+
+	public void setTestSteps(List<TestStep> testSteps) {
+		this.testSteps = testSteps;
+	}
+
+	@Override
+	public List<TestStep> getChildren() {
+		return testSteps;
 	}
 
 }

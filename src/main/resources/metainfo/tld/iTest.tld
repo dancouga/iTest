@@ -12,4 +12,13 @@
 		<description>
 		</description>
 	</function>
+	<function>
+		<name>statusCss</name>
+		<function-class>com.cht.iTest.util.ZKUtils</function-class>
+		<function-signature>
+			java.lang.String statusCss(com.cht.iTest.def.Status status)
+		</function-signature>
+		<description>
+		</description>
+	</function>
 </taglib>

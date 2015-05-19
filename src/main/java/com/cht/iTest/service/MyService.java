@@ -1,14 +1,23 @@
 package com.cht.iTest.service;
 
-import com.cht.iTest.entity.Log;
-
 import java.util.List;
+
+import com.cht.iTest.entity.TestPlan;
 
 public interface MyService {
 
-	Log addLog(Log log);
+	public <T> T saveOrUpdate(Object entity);
 
-	List<Log> getLogs();
+	public <T> List<T> getAllEntities(Class<T> clazz);
 
-	void deleteLog(Log log);
+	public void deleteEntity(Object entity);
+
+	public void initSysConfigParam();
+	
+	public List<String> findAllPlanNames();
+
+	TestPlan findTestPlan(String name);
+
+	void deleteTestPlan(String name);
+
 }

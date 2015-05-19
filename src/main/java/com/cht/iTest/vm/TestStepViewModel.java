@@ -36,13 +36,11 @@ public class TestStepViewModel implements Serializable {
 		}
 
 		TestStep step = new TestStep();
-		// log = myService.addLog(log);
 		stepListModel.add(step);
 	}
 
 	@Command
 	public void deleteTestStep(@BindingParam("step") TestStep step) {
-		// myService.deleteLog(log);
 		stepListModel.remove(step);
 	}
 

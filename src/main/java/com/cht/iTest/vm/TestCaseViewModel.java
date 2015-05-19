@@ -23,6 +23,7 @@ public class TestCaseViewModel implements Serializable {
 
 	private DefaultTreeModel<String> treeModel;
 	private String caseName;
+	private String errorMsg;
 	private boolean canAddLeaf = true;
 	private boolean canAddTrunk = true;
 	private boolean deleteAddNode = false;
@@ -37,11 +38,11 @@ public class TestCaseViewModel implements Serializable {
 	@NotifyChange({ "canAddLeaf", "canAddTrunk", "deleteAddNode" })
 	public void addCase(@BindingParam("type") String type) {
 		if (Strings.isBlank(caseName)) {
-			Clients.showNotification("Please enter CaseName.");
+			Clients.showNotification("Please enter Case Name.");
 			return;
 		}
 
-		boolean isNotSelect =  treeModel.getSelection().isEmpty();
+		boolean isNotSelect = treeModel.getSelection().isEmpty();
 		boolean isLeaf = "leaf".equals(type);
 
 		List<TreeNode<String>> selectLayer = isNotSelect ? treeModel.getRoot().getChildren() : treeModel.getSelection().iterator().next().getChildren();
@@ -122,6 +123,14 @@ public class TestCaseViewModel implements Serializable {
 
 	public void setDeleteAddNode(boolean deleteAddNode) {
 		this.deleteAddNode = deleteAddNode;
+	}
+
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
 	}
 
 }

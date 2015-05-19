@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zk>
-
 	<library-property>
 		<name>org.zkoss.theme.preferred</name>
-		<value>atlantic</value> <!-- or silvertail, atlantic -->
+		<value>sapphire</value>
 	</library-property>
+
+
+	<listener>
+		<description>iTest Desktop Resource Cleanup</description>
+		<listener-class>
+			com.cht.iTest.initializer.DesktopResourceCleanup
+		</listener-class>
+	</listener>
+
 </zk>
