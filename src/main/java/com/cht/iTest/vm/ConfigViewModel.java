@@ -40,7 +40,6 @@ public class ConfigViewModel implements Serializable {
 	public static void show() {
 		Window window = (Window) Executions.createComponents(ZUL, null, null);
 		window.doModal();
-		
 	}
 
 	@Init
