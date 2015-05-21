@@ -6,6 +6,13 @@ import javax.servlet.annotation.WebListener;
 
 import com.cht.iTest.util.JPAHelper;
 
+/**
+ * 
+ * 系統啟動與關閉時，所需進行的處理
+ * 
+ * @author wen
+ *
+ */
 @WebListener()
 public class ITestContextListener implements ServletContextListener {
 	@Override

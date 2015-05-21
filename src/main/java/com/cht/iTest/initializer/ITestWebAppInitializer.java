@@ -7,6 +7,14 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 
+
+/**
+ * 
+ * 當Web啟動時，進行Spring的載入
+ * 
+ * @author wen
+ *
+ */
 public class ITestWebAppInitializer implements WebApplicationInitializer {
 
 	@Override

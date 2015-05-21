@@ -40,13 +40,15 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabs;
+import org.zkoss.zul.theme.Themes;
 
 import com.cht.iTest.entity.TestCase;
 import com.cht.iTest.entity.TestNode;
 import com.cht.iTest.entity.TestPlan;
 import com.cht.iTest.entity.TestStep;
 import com.cht.iTest.selenium.App;
-import com.cht.iTest.service.MyService;
+import com.cht.iTest.service.CommonService;
 import com.cht.iTest.util.Cache;
 import com.cht.iTest.util.ExtractUtils;
 import com.cht.iTest.util.POIUtils;
@@ -63,11 +65,14 @@ public class TestPlanViewModel implements Serializable {
 	private static final String EMBEDDED_ZUL = "/embeddedDB.zul";
 
 	@WireVariable
-	private MyService myService;
+	private CommonService myService;
 	@WireVariable
 	private TestPlanExcelParser testPlanExcelParser;
+
 	@Wire("#startFromMe")
 	private Menupopup startFromMe;
+	@Wire("#tabs")
+	private Tabs tabs;
 
 	private String driverType = "Internet Explorer";
 	private String driverSize = "FullScreen";
@@ -121,8 +126,15 @@ public class TestPlanViewModel implements Serializable {
 				TestPlanViewModel.this.testPlan = testPlan;
 				TestPlanViewModel.this.tabName = testPlan.getTestCaseDetails().get(0);
 				ZKUtils.vmRefresh(TestPlanViewModel.this, "testPlan");
+				tabs.invalidate();
 			}
 		});
+	}
+
+	@Command
+	public void themeSwitch(@BindingParam("type") String themeName) {
+		Themes.setTheme(Executions.getCurrent(), themeName);
+		Executions.sendRedirect(null);
 	}
 
 	@Command
@@ -239,7 +251,7 @@ public class TestPlanViewModel implements Serializable {
 						step.setId(null);
 					}
 				}
-				
+
 				testPlan = myService.saveOrUpdate(testPlan);
 				ListModelList<TestStep> lml = null;
 
@@ -326,14 +338,15 @@ public class TestPlanViewModel implements Serializable {
 	public void parameterSetting() {
 		ConfigViewModel.show();
 	}
-	
+
 	@Command
 	public void copyFrom() {
 		CopyFromViewModel.show(testPlan, new Confirm() {
 			@Override
 			public void ok(TestPlan plan) {
-				
-				
+				TestPlanViewModel.this.testPlan = plan;
+				TestPlanViewModel.this.tabName = plan.getTestCaseDetails().get(0);
+				ZKUtils.vmRefresh(TestPlanViewModel.this, "testPlan");
 			}
 		});
 	}
@@ -536,9 +549,9 @@ public class TestPlanViewModel implements Serializable {
 			}
 		});
 	}
-	
+
 	@Command
-	public void easyStart(){
+	public void easyStart() {
 		EasyProcessViewModel.show(driverType, driverSize, testPlan);
 	}
 

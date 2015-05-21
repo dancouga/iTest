@@ -22,9 +22,9 @@
 			<center border="none" title="執行測試結果" vflex="1" >
 				<listbox model="@bind(vm.queue)" hflex="1" vflex="1">
 					<listhead>
-						<listheader label="案例名稱" style="text-align:center" width="230px" />
-						<listheader label="步驟名稱" style="text-align:center" width="230px" />
-						<listheader label="執行狀態" style="text-align:center" width="80px" />
+						<listheader label="案例名稱" style="text-align:center" width="180px" />
+						<listheader label="步驟名稱" style="text-align:center" width="180px" />
+						<listheader label="執行狀態" style="text-align:center"  />
 					</listhead>
 					<template name="model">
 						<listitem>

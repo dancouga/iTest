@@ -18,7 +18,7 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.cht.iTest.entity.ConfigParam;
-import com.cht.iTest.service.MyService;
+import com.cht.iTest.service.CommonService;
 import com.cht.iTest.util.Cache;
 import com.cht.iTest.util.ExtractUtils;
 
@@ -29,7 +29,7 @@ public class ConfigViewModel implements Serializable {
 	public static final String ZUL = "//config.zul";
 
 	@WireVariable
-	private MyService myService;
+	private CommonService myService;
 	
 	private ListModelList<ConfigParam> listModel = new ListModelList<ConfigParam>();
 	private List<ConfigParam> deletes = new LinkedList<ConfigParam>();

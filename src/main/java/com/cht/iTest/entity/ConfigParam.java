@@ -7,6 +7,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * 
+ * 系統變數
+ * 
+ * @author wen
+ *
+ */
 @Entity
 public class ConfigParam implements Serializable, Cloneable {
 

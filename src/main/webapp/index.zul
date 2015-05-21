@@ -3,6 +3,19 @@
 <?component name="copyright" macroURI="/copyright.zul" ?>
 <zk>
 	<style src="/css/theme-silvertail.css" />
+	<style>
+	.z-tab-text {
+		font-size: 14px;
+    }
+    
+    .z-menu-text {
+    	font-size: 14px;
+    }
+    
+    .z-window-header{
+    	font-size: 14px;
+    }
+	</style>
 	<borderlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.TestPlanViewModel')" hflex="1" vflex="1">
 		<north border="none">
 			<menubar>
@@ -18,6 +31,7 @@
 						<menuitem label="儲存" image="/imgs/save.png" disabled="@load(vm.testPlan eq null)" onClick="@command('saveTestPlan')" />
 						<menuitem label="另存新檔" image="/imgs/save.png" disabled="@load(vm.testPlan eq null)" onClick="@command('saveAsNewOne')" />
 						<menuitem label="清除" image="/imgs/deleteAll.png" disabled="@load(vm.testPlan eq null)" onClick="@command('clearAllCase')" />
+						<menuitem label="TestPlan EasyBuilder" image="/imgs/DocDesign.png" disabled="@load(vm.testPlan eq null)" onClick="@command('copyFrom')" />
 					</menupopup>
 				</menu>
 				<menu image="/imgs/setting.png" label="設定">
@@ -39,10 +53,16 @@
 						</menu>
 						<menu image="/imgs/driverType.png" label="測試Drvier類型">
 							<menupopup>
-								<menuitem checkmark="true" checked="@load(vm.driverType eq 'Internet Explorer')" label="Internet Explorer"
-									onClick="@command('selectDriverType',type='Internet Explorer')" />
+								<menuitem checkmark="true" checked="@load(vm.driverType eq 'Internet Explorer')" label="Internet Explorer" onClick="@command('selectDriverType',type='Internet Explorer')" />
 								<menuitem checkmark="true" checked="@load(vm.driverType eq 'Chrome')" label="Chrome" onClick="@command('selectDriverType',type='Chrome')" />
 								<menuitem checkmark="true" checked="@load(vm.driverType eq 'Firefox')" label="Firefox" onClick="@command('selectDriverType',type='Firefox')" />
+							</menupopup>
+						</menu>
+						<menu image="/imgs/themes.png" label="主題">
+							<menupopup>
+								<menuitem label="Atlantic" disabled="@load(vm.testPlan ne null)" onClick="@command('themeSwitch',type='atlantic')" />
+								<menuitem label="Sapphire" disabled="@load(vm.testPlan ne null)" onClick="@command('themeSwitch',type='sapphire')" />
+								<menuitem label="Silvertail" disabled="@load(vm.testPlan ne null)" onClick="@command('themeSwitch',type='silvertail')" />
 							</menupopup>
 						</menu>
 						<menuitem image="/imgs/config.png" label="系統參數設定" onClick="@command('parameterSetting')" />
@@ -54,7 +74,7 @@
 		</north>
 		<center>
 			<tabbox orient="bottom" hflex="1" vflex="1" sclass="my">
-				<tabs children="@load(vm.testPlan.testCaseDetails)" hflex="1" vflex="1">
+				<tabs children="@load(vm.testPlan.testCaseDetails)" hflex="1" vflex="1" id="tabs">
 					<template name="children">
 						<tab selected="@load(each eq vm.tabName)" label="@load(each.name)" draggable="case" droppable="case,step"
 							onDrop="@command('changeCaseExecSeq', drop=event, index=forEachStatus.index)" onClick="@command('tabName', testCase=each)" 
@@ -72,12 +92,11 @@
 					<menupopup id="startFromMe">
 						<menuitem label="承接上次測試變數資料由此步驟開始" image="/imgs/play.png" onClick="@command('execute')" />
 					</menupopup>
-					<button label="Copy From..." image="/imgs/start.png" onClick="@command('copyFrom')" visible="false"/>
-					<button label="執行簡易測試" image="/imgs/start.png" onClick="@command('easyStart')" />
-					<button label="新增測試步驟" onClick="@command('createTestStep')" />
-					<button label="刪除測試步驟" onClick="@command('deleteTestSteps')" />
-					<button label="新增測試案例" image="/imgs/add.png" onClick="@command('modifyTestCase',modifyType='create')" />
-					<button label="儲存測試計畫" image="/imgs/save.png" onClick="@command('saveTestPlan')" />
+					<button label="簡易測試" image="/imgs/start.png" onClick="@command('easyStart')" />
+					<button label="新增步驟" onClick="@command('createTestStep')" />
+					<button label="刪除步驟" onClick="@command('deleteTestSteps')" />
+					<button label="新增案例" image="/imgs/add.png" onClick="@command('modifyTestCase',modifyType='create')" />
+					<button label="儲存計畫" image="/imgs/save.png" onClick="@command('saveTestPlan')" />
 				</toolbar>
 				<tabpanels children="@load(vm.testPlan.testCaseDetails)" hflex="1" vflex="1" style="border:none;">
 					<template name="children">
@@ -86,15 +105,15 @@
 								<listhead sizable="true">
 									<listheader label="" width="30px" align="center" />
 									<listheader label="Seq" width="40px" align="center" />
-									<listheader label="Name" hflex="1" align="center" />
+									<listheader label="Name" width="180px" align="center" />
 									<listheader label="Skip" width="60px" align="center" />
 									<listheader label="Action" width="80px" align="center" />
 									<listheader label="Sync" width="60px" align="center" />
-									<listheader label="Element" width="200px" align="center" />
+									<listheader label="Element" hflex="1" align="center" />
 									<listheader label="FindMethod" width="110px" align="center" />
-									<listheader label="InputValue" width="200px" align="center" />
+									<listheader label="InputValue" width="180px" align="center" />
 									<listheader label="Snapshot" width="80px" align="center" />
-									<listheader label="Description" hflex="1" align="center" />
+									<listheader label="Description" width="180px" align="center" />
 								</listhead>
 								<template name="model">
 									<listitem draggable="step" droppable="step" onDrop="@command('changeStepExecSeq',drop=event,dropObj=each)" context="startFromMe">

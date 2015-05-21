@@ -11,8 +11,23 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.IOUtils;
 
+/**
+ * 
+ * 壓縮檔案ZIP工具類別
+ * 
+ * @author wen
+ *
+ */
 public class ZipUtils {
 
+	/**
+	 * 
+	 * 壓縮檔案為ZIP, 並輸送至OutputStream
+	 * 
+	 * @param file
+	 * @param os
+	 * @throws Exception
+	 */
 	public static void compress(File file, OutputStream os) throws Exception {
 		ArchiveOutputStream aos = null;
 
@@ -25,6 +40,14 @@ public class ZipUtils {
 		}
 	}
 
+	/**
+	 * 
+	 * 將檔案轉換為ZIP後，進行byte[]輸出
+	 * 
+	 * @param file
+	 * @return
+	 * @throws Exception
+	 */
 	public static byte[] compress2ByteAry(File file) throws Exception {
 		ByteArrayOutputStream baos = null;
 		byte[] res = null;

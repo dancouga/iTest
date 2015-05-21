@@ -16,7 +16,7 @@ import org.zkoss.zul.Window;
 import com.cht.iTest.entity.TestCase;
 import com.cht.iTest.entity.TestPlan;
 import com.cht.iTest.entity.TestStep;
-import com.cht.iTest.service.MyService;
+import com.cht.iTest.service.CommonService;
 import com.cht.iTest.util.ZKUtils;
 import com.cht.iTest.util.ZKUtils.MessageAction;
 
@@ -29,7 +29,7 @@ public class SelectTestPlanViewModel implements Serializable {
 	private ListModelList<String> testPlans = new ListModelList<String>();
 
 	@WireVariable
-	private MyService myService;
+	private CommonService myService;
 
 	private Action action = null;
 

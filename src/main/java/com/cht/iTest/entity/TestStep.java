@@ -17,6 +17,13 @@ import com.cht.iTest.def.Snapshot;
 import com.cht.iTest.def.Status;
 import com.cht.iTest.def.Sync;
 
+/**
+ * 
+ * 測試步驟
+ * 
+ * @author wen
+ *
+ */
 @Entity
 public class TestStep implements TestNode, Serializable, Cloneable {
 
@@ -72,10 +79,12 @@ public class TestStep implements TestNode, Serializable, Cloneable {
 		this.execOrder = execOrder;
 	}
 
+	@Override
 	public Long getId() {
 		return Id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		Id = id;
 	}
@@ -173,5 +182,27 @@ public class TestStep implements TestNode, Serializable, Cloneable {
 		return null;
 	}
 
+	@Transient
+	@Override
+	public String getDraggable() {
+		return "TestStep";
+	}
+
+	@Transient
+	@Override
+	public String getDroppable() {
+		return "TestStep";
+	}
+
+	@Transient
+	@Override
+	public TestNode getParent() {
+		return testCase;
+	}
+
+	@Override
+	public void setParent(TestNode parent) {
+		this.testCase = (TestCase) parent;
+	}
 
 }

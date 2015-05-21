@@ -15,6 +15,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
+/**
+ * 
+ * 測試計畫
+ * 
+ * @author wen
+ *
+ */
 @Entity
 public class TestPlan implements TestNode, Serializable, Cloneable {
 
@@ -30,10 +37,12 @@ public class TestPlan implements TestNode, Serializable, Cloneable {
 	@OrderBy("execOrder")
 	private List<TestCase> testCaseDetails = new ArrayList<TestCase>();
 
+	@Override
 	public Long getId() {
 		return Id;
 	}
 
+	@Override
 	public void setId(Long id) {
 		Id = id;
 	}
@@ -68,5 +77,28 @@ public class TestPlan implements TestNode, Serializable, Cloneable {
 	@Transient
 	public List<TestCase> getChildren() {
 		return testCaseDetails;
+	}
+
+	@Transient
+	@Override
+	public String getDraggable() {
+		return null;
+	}
+
+	@Transient
+	@Override
+	public String getDroppable() {
+		return "TestCase";
+	}
+
+	@Transient
+	@Override
+	public TestNode getParent() {
+		return null;
+	}
+
+	@Override
+	public void setParent(TestNode parent) {
+		
 	}
 }

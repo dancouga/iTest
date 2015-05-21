@@ -10,30 +10,41 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cht.iTest.entity.ConfigParam;
 import com.cht.iTest.entity.TestPlan;
 import com.cht.iTest.selenium.App;
-import com.cht.iTest.service.MyService;
+import com.cht.iTest.service.CommonService;
 import com.cht.iTest.util.JPAHelper;
 
+/**
+ * 
+ * iTest常用服務介面實作
+ * 
+ * @author wen
+ *
+ */
 @Service("myService")
 @Scope(value = "singleton", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class MyServiceImpl implements MyService {
+public class MyServiceImpl implements CommonService {
 
 	@SuppressWarnings("unchecked")
 	@Transactional
+	@Override
 	public <T> T saveOrUpdate(Object entity) {
 		return (T) JPAHelper.save(entity);
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public <T> List<T> getAllEntities(Class<T> clazz) {
 		return JPAHelper.findAllEntities(clazz);
 	}
 
 	@Transactional
+	@Override
 	public void deleteEntity(Object entity) {
 		JPAHelper.delete(entity);
 	}
-
+	
 	@Transactional
+	@Override
 	public void initSysConfigParam() {
 		List<ConfigParam> list = getAllEntities(ConfigParam.class);
 

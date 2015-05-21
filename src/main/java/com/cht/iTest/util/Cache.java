@@ -7,22 +7,53 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cht.iTest.entity.ConfigParam;
-import com.cht.iTest.service.MyService;
+import com.cht.iTest.service.CommonService;
 
+/**
+ * 
+ * 系統快取
+ * 
+ * @author wen
+ *
+ */
 public class Cache {
 
 	private static Map<String, Map<String, Object>> myCache = new ConcurrentHashMap<String, Map<String, Object>>();
 
+	/**
+	 * 
+	 * 系統快取-系統變數類別名稱
+	 * 
+	 */
 	public static String SYSTEM_CATEGORY = "SYSTEM_CATEGORY";
 
+	/**
+	 * 
+	 * 清除所有快取
+	 * 
+	 */
 	public static void clearAll() {
 		myCache.clear();
 	}
 
+	/**
+	 * 
+	 * 針對特定類別建立快取
+	 * 
+	 * @param category
+	 * @param value
+	 */
 	public static void putByCategory(String category, Map<String, Object> value) {
 		myCache.put(category, value);
 	}
 
+	/**
+	 * 
+	 * 取得特定類別快取
+	 * 
+	 * @param category
+	 * @return
+	 */
 	public static Map<String, Object> getCategory(String category) {
 		return myCache.get(category);
 	}
@@ -84,11 +115,11 @@ public class Cache {
 	}
 
 	public static void refreshSysCategory() {
-		List<ConfigParam> list = SpringUtils.getBean(MyService.class).getAllEntities(ConfigParam.class);
+		List<ConfigParam> list = SpringUtils.getBean(CommonService.class).getAllEntities(ConfigParam.class);
 
 		if (list.isEmpty()) {
-			SpringUtils.getBean(MyService.class).initSysConfigParam();
-			list = SpringUtils.getBean(MyService.class).getAllEntities(ConfigParam.class);
+			SpringUtils.getBean(CommonService.class).initSysConfigParam();
+			list = SpringUtils.getBean(CommonService.class).getAllEntities(ConfigParam.class);
 		}
 
 		Cache.putSysCategory(ExtractUtils.extract2Map(list, "name", "value"));

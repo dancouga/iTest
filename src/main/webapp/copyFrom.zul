@@ -1,45 +1,55 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="copyWin" title="Copy From..." width="800px" height="600px" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.CopyFromViewModel')">
+	<window id="copyWin" title="TestPlan EasyBuilder" width="960px" height="600px" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.CopyFromViewModel')">
 		<style>
-   .z-tree-icon .z-tree-open {
-     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA71JREFUeNqElW1oW1UYx//n5qZN0na7LlmzFzqauY198CUiShXUpoH6VR0iCFMQFPwgaxVhflEEPwh+aKofRMUJ4icFYeKm+NIXkc0hm6kV0W7SOdEma2dj0yZN7j33+D/n3qXtVvTCQ07O8zy/87ydewU2edTpdC9/jlD6Kdlr1EXKBGVU3FW+eK2vuA52Kj0Cu2MIyQEglQPimY0G9VlgYRy4MgZ4KwVxd3l4U6D/zXaH/8bFDbdnkXkasNq4WQbkX+vMFBDZTV03dU1g9k2oxbNFbuese+crLaA/ljIwbO/LisxjhFzi6RQRpTZCsdaAkPxxAXsPVT1Qs+8D898F0IGFirFUvnoJWw5mRc8gU5rA1LnTyD/4MfIPfITjJ2d4ojQyNV3i3odGd/yTL2k7CeNDX8PQEcrPt/XCbp+1bn0ScH9kMAnkHz2FY28/bBJ46JEPcHbssInv0BOf4sUX8nCcGPKDb+HCmUPMhJnaN8GfeofrRkZ4J5wRkb55yNq5k8DfgcQtFKajGLwQQVWaf+s0gPZUkLbOXPB//Q+g9hOBu+HPzUGVpws2PNUvtrLIq0wNNktE60YjrF0IlHRWHtfNsI5auOfTRrIc3m8QW3uh/lT9tpIqK9hQ1Bh6ZAt9Fml/tRlh32Q1WGpwqzlcu/M6TS6rEHHukmWbiPQpWvTT4Ki4NXIiqC77ePmVXzE9EzWqwftsPHdk71q39UF+eJBhKFjKU0EX9aavFRwJb9nIe++eh0jmUPj6eyOlZh8+O8E6ewS5tJEsg69CXwnNsgK6ChVynfg4820djz97FE4sakSvvzj5z7qIdP2uQgOwTWpRVZeyQtdP10PfECtiOhwXMdyYWbt6DtfVeTsAKRk0SrJRVifI0BEWLRZyQpZ5vaxtTKMeQL2mSSfVlUDctjbI/gP7w+jc0JY+woFmaBZTVqNyjkDJNqGT0BUarRrjXd0dWLo814pQr9POUghaDWzRQd8YAoYatWJPNS6qpltwZ34G2nqC090lY3znQBsmj73eAur1PfezHB6noFkNbKO7oH01Q7PMy6H+hu1wEsYj3Tuy0X37OOSXgpFI7sHkV134YcJFe1zgtlwUfXcs6FB5B7p4c3rgXjgPeblU5Ljm4s94ldbrqzYSCaDJVDZ64CD1TEdy2JNJVsIJjBY5oxVGH03SNMHIfoG8smBgiWFZ2fQFW3tNjCBiD0XSO2BTrM7ODXp/eRleucQmlHTjConn1fB/vrH1s/IqeDH/5xMgMNpxFNd9Av4VYAAMPN6idWbbIwAAAABJRU5ErkJggg==);
-     background-size: cover;
-     width: 100%;
-   }
-   .z-tree-icon .z-tree-close {
-     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxBJREFUeNqcVc9PE0EU/mZ3S1OogUILxEgsiAonGr2IBwMcjCdP3jxr1MRADybeOEkwHgoxUYP/hQfDCYgH8aKBE2iAQvjZUqCRQi3t7PjtTuVn0xgmeTv75r33zZt935sVKDHUZEOYUy+lixI5ZZ6iTFCGRWdi8XSsOAP2tSEGq6oPdT1AsBvwNZ90yMaB1DiwNQYU9obE7US0JKD9JVRDbVwEbkbQ/BSwGoo7ZJ3Hkbvw6ddCAoi/h9r5PkVzt3FnM30IaI8FXTCEbkVEy2OueomRQdkh/PTJQS2MAJvfNGhPKm25SdiqXwTaI6LpLndew/+NTY3LGJVLR9TOTD/VqJCjtWFY3rjR8YipLvOorId9ACyOArvLOtZ/Sc+ZFT1faALC9wCjggmwLkYT7OmPfM81G0ravahpBQ5mgRyN+XVg6TMQegh0J7TUPdDyT3dsjo/j68Q4scRwsCwUVJeormf1ZotHYcDBNtTlKGoDAXdle2fHnY/rYm2YMTyB3OLKFkT1VahV1WUpqSKCmWMvxYfkB/XwCBJZ+6i2zjtwUq+kDwobzJIJwISoIiCxLEi6SRplXnvLVdolxMprzCd1ZmJpwJ0Pddpg5oA/qw5HtLgYCpYqENCWekEjsjDkc2IAvvVXRYpouvqSg1o3qHusYzFwMRwsZmhDZ2nwTIUjB4O6UYY10j7GSauIYcMg6pTa/c3FgHY6jzDWwXCwSBs1IRMksxk6PyBjHQwHS/wZ8YZhmHHvjU7SZaFYNeD+E4G1ZOnTXiTLPn0o1tzDnq9oQe7HpPMdm92vnX3niZm1wT7P9XZ2wzQ5wT6tbyvfeUnydp/97u9A/ucM5HZqyPcsH9WAb60akmzcrG+MeFrZNdl5ZpsoD1jBzHxXkJ+bg0xuTPFy6fY9L6QPr6/9mKlB64IRz7U22rl7jsQ9IOFVkR7CJFAQ8DbS1Y/8r1k2SsoFq4zKdMkLdv+NiMG0+syGRl6JjTD8/hN2O5PhVbjBInAzWRiqfKGiZW9sZ+wNIswUyv8CBIarXuLML+CvAAMASDyP6pmxxvMAAAAASUVORK5CYII=);
-     background-size: cover;
-     width: 100%;
-   }
-   /*remove the font awesome icon*/
-   .z-tree-icon .z-tree-open::before,
-   .z-tree-icon .z-tree-close::before {
-     content: '';
-   }
-  </style>
+			.z-tree-icon .z-tree-open { background-image:url('imgs/fo.png'); background-size: cover; width: 100%; }
+			.z-tree-icon .z-tree-close { background-image:url('imgs/fc.png'); background-size: cover; width: 100%; }
+			.z-tree-icon .z-tree-open::before, .z-tree-icon .z-tree-close::before { content: ''; }
+		</style>
 		<vlayout hflex="1" vflex="1">
+			<label value="請選擇複製來源計畫後，將測試節點以拖曳方式移至當前計畫內..." />
 			<hlayout hflex="1" vflex="1">
 				<groupbox closable="false" mold="3d" hflex="1" vflex="1">
-					<caption label="@load(vm.tar.name)" />
-					<tree model="@bind(vm.tarTreeModel)" hflex="1" vflex="1" style="border:none;">
+					<caption label="當前計畫" height="30px">
+						<textbox value="@bind(vm.tar.name)" width="200px" inplace="true" />
+					</caption>
+					<tree model="@bind(vm.tarTreeModel)" hflex="1" vflex="1" style="border:none;" droppable="TestCase" onDrop="@command('move',drop=event)">
+						<treecols>
+							<treecol width="90%" />
+							<treecol width="10%" />
+						</treecols>
 						<template name="model">
-							<treeitem >
+							<treeitem droppable="${each.data.droppable},self" draggable="self" onDrop="@command('move',drop=event)" value="${each}">
 								<treerow>
-									<treecell>${each.data.name}</treecell>
+									<treecell>
+										<textbox value="@bind(each.data.name)" width="200px" inplace="true" />
+									</treecell>
+									<treecell>
+										<image src="/imgs/delete.png" onClick="@command('delete',del=each)" />
+									</treecell>
 								</treerow>
 							</treeitem>
 						</template>
+						<treefoot>
+							<treefooter span="2" align="center">
+								<listbox mold="select" selectedIndex="@bind(vm.selectAdd)">
+									<listitem label="TestCase" />
+									<listitem label="TestStep" />
+								</listbox>
+								<textbox value="@bind(vm.addName)" />
+								<button image="/imgs/add.png" label="新增" onClick="@command('add')"/>
+							</treefooter>
+						</treefoot>
 					</tree>
 				</groupbox>
 				<groupbox closable="false" hflex="1" mold="3d" vflex="1">
-					<caption label="複製來源-">
+					<caption label="複製來源" height="30px">
 						<listbox mold="select" model="@bind(vm.testPlans)" hflex="1" onSelect="@command('selectPlan')" />
 					</caption>
 					<tree model="@bind(vm.srcTreeModel)" hflex="1" vflex="1" style="border:none;">
 						<template name="model">
-							<treeitem >
-								<treerow >
+							<treeitem draggable="${each.data.draggable}" value="${each}">
+								<treerow>
 									<treecell>${each.data.name}</treecell>
 								</treerow>
 							</treeitem>
@@ -48,7 +58,7 @@
 				</groupbox>
 			</hlayout>
 			<toolbar align="center">
-				<button label="確定" image="/imgs/ok.png" onClick="@command('confirm')" />
+				<button label="確定" image="/imgs/ok.png" onClick="@command('confirm',dialogWin=copyWin)" />
 				<button label="放棄" image="/imgs/cancel.png" onClick="copyWin.detach();" />
 			</toolbar>
 		</vlayout>

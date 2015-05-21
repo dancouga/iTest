@@ -41,6 +41,13 @@ import com.cht.iTest.entity.TestStep;
 import com.cht.iTest.util.Cache;
 import com.cht.iTest.util.SpringUtils;
 
+/**
+ * 
+ * Selenium代理
+ * 
+ * @author wen
+ *
+ */
 public class App {
 
 	public static final String WEBDRIVER_IE_DRIVER = "webdriver.ie.driver";
@@ -185,6 +192,7 @@ public class App {
 
 			switch (action) {
 			case input:
+				webElement.clear();
 				webElement.sendKeys(data);
 				break;
 			case click:
@@ -220,7 +228,6 @@ public class App {
 				break;
 			case dialog:
 				webElement.click();
-
 				driver.switchTo().activeElement();
 				break;
 			default:
@@ -252,7 +259,7 @@ public class App {
 
 			}
 
-			if (driver.getTitle().equals(windowTitle)) {
+			if (driver.getTitle().contains(windowTitle)) {
 				return;
 			}
 		}
@@ -283,6 +290,14 @@ public class App {
 
 		if (findMethod == null || findMethod == FindMethod.none) {
 			return null;
+		}
+
+		if (StringUtils.isNotBlank(element)) {
+			Set<String> vars = getVarsFromContent(element);
+
+			for (String var : vars) {
+				element = element.replace(var, executeContext.get(var));
+			}
 		}
 
 		switch (findMethod) {
@@ -343,7 +358,16 @@ public class App {
 
 	public void exit() {
 		try {
-			driver.close();
+			Set<String> windows = driver.getWindowHandles();
+
+			for (String window : windows) {
+				try {
+					driver.switchTo().window(window).close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
 			driver.quit();
 		} catch (Exception ex) {
 			ex.printStackTrace();
