@@ -1,8 +1,8 @@
-<?page title="iTest" contentType="text/html;charset=UTF-8"?>
+<?page title="iTest" contentType="text/html;charset=UTF-8" automaticTimeout="false"?>
 <?taglib uri="http://www.cht.com.tw/iTest" prefix="iTest" ?>
 <?component name="copyright" macroURI="/copyright.zul" ?>
 <zk>
-	<style src="/css/theme-silvertail.css" />
+
 	<style>
 	.z-tab-text {
 		font-size: 14px;
@@ -107,7 +107,7 @@
 									<listheader label="Seq" width="40px" align="center" />
 									<listheader label="Name" width="180px" align="center" />
 									<listheader label="Skip" width="60px" align="center" />
-									<listheader label="Action" width="80px" align="center" />
+									<listheader label="Action" width="120px" align="center" />
 									<listheader label="Sync" width="60px" align="center" />
 									<listheader label="Element" hflex="1" align="center" />
 									<listheader label="FindMethod" width="110px" align="center" />

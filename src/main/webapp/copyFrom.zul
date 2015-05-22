@@ -1,6 +1,6 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="copyWin" title="TestPlan EasyBuilder" width="960px" height="600px" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.CopyFromViewModel')">
+	<window id="copyWin" title="TestPlan EasyBuilder" width="960px" height="600px" maximizable="true" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.CopyFromViewModel')">
 		<style>
 			.z-tree-icon .z-tree-open { background-image:url('imgs/fo.png'); background-size: cover; width: 100%; }
 			.z-tree-icon .z-tree-close { background-image:url('imgs/fc.png'); background-size: cover; width: 100%; }

@@ -47,6 +47,7 @@ import com.cht.iTest.entity.TestCase;
 import com.cht.iTest.entity.TestNode;
 import com.cht.iTest.entity.TestPlan;
 import com.cht.iTest.entity.TestStep;
+import com.cht.iTest.initializer.DesktopResourceCleanup;
 import com.cht.iTest.selenium.App;
 import com.cht.iTest.service.CommonService;
 import com.cht.iTest.util.Cache;
@@ -347,6 +348,7 @@ public class TestPlanViewModel implements Serializable {
 				TestPlanViewModel.this.testPlan = plan;
 				TestPlanViewModel.this.tabName = plan.getTestCaseDetails().get(0);
 				ZKUtils.vmRefresh(TestPlanViewModel.this, "testPlan");
+				tabs.invalidate();
 			}
 		});
 	}
@@ -370,6 +372,7 @@ public class TestPlanViewModel implements Serializable {
 		ZKUtils.msgYN("這項操作會清除當前頁面上所有資料，是否執行?", new MessageAction() {
 			@Override
 			public void doIfYes() {
+				DesktopResourceCleanup.destroySeleniumApp(Executions.getCurrent().getDesktop());
 				Executions.getCurrent().sendRedirect(null);
 			}
 		});

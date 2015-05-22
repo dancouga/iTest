@@ -150,7 +150,11 @@ public class EasyProcessViewModel implements Serializable {
 
 			executeContext.put(args[0], args[1]);
 		}
-
+		
+		if (app != null) {
+			app.exit();
+		}
+		
 		app = App.getInstance(driverType, driverSize).setExecuteContext(executeContext).setSteps(queue);
 		Clients.showBusy("測試中.... 請稍候!");
 		Events.echoEvent("onProcessAsync", processWin, executeContext);
@@ -160,8 +164,6 @@ public class EasyProcessViewModel implements Serializable {
 		Map<String, Object> param = ZKUtils.argBuilder().put(PARAM_TEST_PLAN, testPlan).put(PARAM_DRIVER_TYPE, driverType).put(PARAM_DRIVER_SIZE, driverSize).build();
 		
 		Window window = (Window) Executions.createComponents(ZUL, null, param);
-		window.setPosition("center");
-		window.setMode(Window.Mode.OVERLAPPED);
 		window.addEventListener(Events.ON_MAXIMIZE, new EventListener<MaximizeEvent>() {
 			@Override
 			public void onEvent(MaximizeEvent evt) throws Exception {

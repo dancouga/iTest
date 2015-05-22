@@ -118,6 +118,7 @@ public class App {
 		}
 
 		currentGetVar = null;
+		Thread.sleep(500);
 		Object webElement = findElement();
 		triggerAction(webElement);
 		snapshot();
@@ -150,7 +151,7 @@ public class App {
 
 	private void triggerAction(Object element) throws InterruptedException {
 		Action action = testStep.getAction();
-
+	
 		if (action == Action.wait) {
 			String val = testStep.getInputValue();
 			Long waitSec = StringUtils.isNumeric(val) ? Long.parseLong(val) : Long.valueOf(Cache.getSysCateVal(App.DEFAULT_WAIT_SEC, "10"));
@@ -258,8 +259,8 @@ public class App {
 			} catch (Exception ex) {
 
 			}
-
-			if (driver.getTitle().contains(windowTitle)) {
+			
+			if (driver.getTitle().trim().startsWith(windowTitle.trim())) {
 				return;
 			}
 		}
@@ -367,14 +368,18 @@ public class App {
 					ex.printStackTrace();
 				}
 			}
-
-			driver.quit();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			try {
 				driver.quit();
+				
 			} catch (Exception ee) {
+				try {
+					Runtime.getRuntime().exec("TaskKill /F /IM IEDriverServer.exe");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				ee.printStackTrace();
 			}
 		}
