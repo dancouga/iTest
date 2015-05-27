@@ -36,6 +36,8 @@ public class TestPlan implements TestNode, Serializable, Cloneable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "testPlan", fetch = FetchType.EAGER, orphanRemoval = true)
 	@OrderBy("execOrder")
 	private List<TestCase> testCaseDetails = new ArrayList<TestCase>();
+	private String driverType = "Internet Explorer";
+	private String driverSize = "FullScreen";
 
 	@Override
 	public Long getId() {
@@ -99,6 +101,25 @@ public class TestPlan implements TestNode, Serializable, Cloneable {
 
 	@Override
 	public void setParent(TestNode parent) {
-		
+
 	}
+
+	@Transient
+	public String getDriverSize() {
+		return driverSize;
+	}
+
+	public void setDriverSize(String driverSize) {
+		this.driverSize = driverSize;
+	}
+
+	@Transient
+	public String getDriverType() {
+		return driverType;
+	}
+
+	public void setDriverType(String driverType) {
+		this.driverType = driverType;
+	}
+
 }

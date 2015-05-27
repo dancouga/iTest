@@ -13,12 +13,13 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.MaximizeEvent;
+import org.zkoss.zk.ui.event.MinimizeEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.VariableResolver;
@@ -44,18 +45,26 @@ public class EasyProcessViewModel implements Serializable {
 
 	public static final String ZUL = "//easyProcess.zul";
 	public static final String PARAM_TEST_PLAN = "testPlan";
-	public static final String PARAM_DRIVER_TYPE = "driverType";
-	public static final String PARAM_DRIVER_SIZE = "driverSize";
+	public static final String PARAM_BEFORE_EXIT = "beforeExit";
+	public static final String PARAM_INTERACT = "Interact";
 
-	private String driverSize;
-	private String driverType;
+	private TestPlan testPlan;
 	private App app;
 	private Boolean run = Boolean.FALSE;
+	private Integer startFrom;
+	private Boolean fail = Boolean.FALSE;
 	private ListModelList<TestStep> queue = new ListModelList<TestStep>();
 	private ListModelList<String[]> executeContextParam = new ListModelList<String[]>();
+	private Interact interact;
 
 	@Wire("#processWin")
 	private Window processWin;
+
+	public interface Interact {
+
+		void toExit();
+
+	}
 
 	@AfterCompose
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
@@ -66,9 +75,9 @@ public class EasyProcessViewModel implements Serializable {
 	@Init
 	public void init() {
 		Map<?, ?> args = Executions.getCurrent().getArg();
-		TestPlan testPlan = (TestPlan) args.get(PARAM_TEST_PLAN);
-		driverType = (String) args.get(PARAM_DRIVER_TYPE);
-		driverSize = (String) args.get(PARAM_DRIVER_SIZE);
+		testPlan = (TestPlan) args.get(PARAM_TEST_PLAN);
+		interact = (Interact) args.get(PARAM_INTERACT);
+
 		Set<String> vars = new LinkedHashSet<String>();
 		Set<String> getVars = new LinkedHashSet<String>();
 		Map<String, String> replaceVars = new HashMap<String, String>();
@@ -106,8 +115,9 @@ public class EasyProcessViewModel implements Serializable {
 		}
 
 		vars.removeAll(getVars);
+
 		for (String var : vars) {
-			executeContextParam.add(new String[] { var,  null });
+			executeContextParam.add(new String[] { var, null });
 		}
 	}
 
@@ -117,6 +127,7 @@ public class EasyProcessViewModel implements Serializable {
 			app.exit();
 		}
 
+		interact.toExit();
 		processWin.detach();
 	}
 
@@ -130,7 +141,41 @@ public class EasyProcessViewModel implements Serializable {
 				executeContextParam.add(new String[] { entry.getKey(), entry.getValue() });
 			}
 
-			ZKUtils.vmRefresh(EasyProcessViewModel.this, "queue", "executeContextParam");
+			this.startFrom = null;
+
+			if (app.getTestStep() != null && app.getTestStep().getErrorMsg() != null) {
+				this.fail = Boolean.TRUE;
+			} else {
+				this.fail = Boolean.FALSE;
+			}
+
+			ZKUtils.vmRefresh(EasyProcessViewModel.this, "fail", "queue", "executeContextParam");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			Clients.clearBusy();
+		}
+	}
+
+	@Listen("onContinueFromSelect=#processWin")
+	public void continueFromSelect(Event evt) {
+		try {
+			app.continueFromFail(startFrom);
+			executeContextParam.clear();
+
+			for (Entry<String, String> entry : app.getExecuteContext().entrySet()) {
+				executeContextParam.add(new String[] { entry.getKey(), entry.getValue() });
+			}
+
+			this.startFrom = null;
+
+			if (app.getTestStep() != null && app.getTestStep().getErrorMsg() != null) {
+				this.fail = Boolean.TRUE;
+			} else {
+				this.fail = Boolean.FALSE;
+			}
+
+			ZKUtils.vmRefresh(EasyProcessViewModel.this, "fail", "queue", "executeContextParam");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -150,29 +195,58 @@ public class EasyProcessViewModel implements Serializable {
 
 			executeContext.put(args[0], args[1]);
 		}
-		
+
 		if (app != null) {
 			app.exit();
 		}
-		
-		app = App.getInstance(driverType, driverSize).setExecuteContext(executeContext).setSteps(queue);
+
+		app = App.getInstance(testPlan.getDriverType(), testPlan.getDriverSize()).setExecuteContext(executeContext).setSteps(queue);
 		Clients.showBusy("測試中.... 請稍候!");
 		Events.echoEvent("onProcessAsync", processWin, executeContext);
 	}
 
-	public static void show(String driverType, String driverSize, TestPlan testPlan) {
-		Map<String, Object> param = ZKUtils.argBuilder().put(PARAM_TEST_PLAN, testPlan).put(PARAM_DRIVER_TYPE, driverType).put(PARAM_DRIVER_SIZE, driverSize).build();
-		
+	@Command
+	public void startFromSelect() {
+		Map<String, String> executeContext = new HashMap<String, String>();
+
+		for (String[] args : executeContextParam) {
+			if (StringUtils.isBlank(args[1])) {
+				Messagebox.show(String.format("請輸入變數【%s】之值", args[0]));
+				return;
+			}
+
+			executeContext.put(args[0], args[1]);
+		}
+
+		Clients.showBusy("測試中.... 請稍候!");
+		Events.echoEvent("onContinueFromSelect", processWin, executeContext);
+	}
+
+	public static Window show(TestPlan testPlan, Interact interact) {
+		Map<String, Object> param = ZKUtils.argBuilder().put(PARAM_INTERACT, interact).put(PARAM_TEST_PLAN, testPlan).build();
+
 		Window window = (Window) Executions.createComponents(ZUL, null, param);
-		window.addEventListener(Events.ON_MAXIMIZE, new EventListener<MaximizeEvent>() {
+		window.setMode(Window.Mode.MODAL);
+		window.setPosition("center");
+		window.addEventListener(Events.ON_MINIMIZE, new EventListener<MinimizeEvent>() {
 			@Override
-			public void onEvent(MaximizeEvent evt) throws Exception {
-				if (StringUtils.isBlank(evt.getHeight())) {
-					window.setHeight(window.getMinheight() + "px");
-					window.setWidth(window.getMinwidth() + "px");
+			public void onEvent(MinimizeEvent evt) throws Exception {
+				if (evt.isMinimized()) {
+					window.doOverlapped();
+					window.setVisible(false);
 				}
 			}
 		});
+
+		return window;
+	}
+
+	@Command
+	@NotifyChange("startFrom")
+	public void selectQueue() {
+		int index = queue.isSelectionEmpty() ? -1 : queue.indexOf(queue.getSelection().iterator().next());
+		this.setStartFrom(index);
+
 	}
 
 	public Boolean getRun() {
@@ -197,6 +271,22 @@ public class EasyProcessViewModel implements Serializable {
 
 	public void setExecuteContextParam(ListModelList<String[]> executeContextParam) {
 		this.executeContextParam = executeContextParam;
+	}
+
+	public Boolean getFail() {
+		return fail;
+	}
+
+	public void setFail(Boolean fail) {
+		this.fail = fail;
+	}
+
+	public Integer getStartFrom() {
+		return startFrom;
+	}
+
+	public void setStartFrom(Integer startFrom) {
+		this.startFrom = startFrom;
 	}
 
 }

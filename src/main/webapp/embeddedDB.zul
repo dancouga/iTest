@@ -1,11 +1,11 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window mode="modal" closable="true" border="normal" width="640px" height="480px" maximizable="true">
+	<window mode="modal" closable="true" border="normal" width="840px" height="600px" maximizable="true">
 		<caption>
 				<label>【JDBC_URL=jdbc:h2:./db/itest】</label>
-				<space width="30px" />
+				<space width="10px" />
 				<label>【USER_NAME=test】</label>
-				<space width="30px" />
+				<space width="10px" />
 				<label>【PASSWORD=1234】</label>
 				http://${execution.nativeRequest.localName}:8082
 		</caption>

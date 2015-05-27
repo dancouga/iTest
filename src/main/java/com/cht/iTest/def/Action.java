@@ -60,6 +60,10 @@ public enum Action {
 	/**
 	 * 移動當前操作元件為對話盒
 	 */
-	dialog;
+	dialog,
+	/**
+	 * 
+	 */
+	iframe;
 
 }

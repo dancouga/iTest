@@ -129,14 +129,60 @@ public class App {
 	}
 
 	public App start() {
+		setTestStep(null);
+
 		for (TestStep current : steps) {
-			try {
-				testStep = current;
-				doCurrentStep();
-			} catch (Exception e) {
-				e.printStackTrace();
-				testStep.setErrorMsg(e.getMessage());
-				testStep.setExeStatus(Status.Fail);
+			current.setErrorMsg(null);
+			current.setExeStatus(Status.Ready);
+		}
+
+		int times = Integer.parseInt(Cache.getSysCateVal(App.RETRY_TIMES, "2"));
+
+		for (TestStep current : steps) {
+			testStep = current;
+
+			for (int i = 0; i <= times; i++) {
+				try {
+					doCurrentStep();
+					break;
+				} catch (Exception ex) {
+					if (i == times) {
+						ex.printStackTrace();
+						testStep.setErrorMsg(ex.getMessage());
+						testStep.setExeStatus(Status.Fail);
+					}
+				}
+			}
+
+			if (testStep.getErrorMsg() != null) {
+				break;
+			}
+
+			setTestStep(null);
+		}
+
+		return this;
+	}
+
+	public App continueFromFail(int index) {
+		int times = Cache.getSysCateIntVal(App.RETRY_TIMES, "2").intValue();
+
+		for (int i = index; i < steps.size(); i++) {
+			testStep = steps.get(i);
+
+			for (int j = 0; j <= times; j++) {
+				try {
+					testStep.setErrorMsg(null);
+					testStep.setExeStatus(Status.Ready);
+					doCurrentStep();
+					break;
+				} catch (Exception ex) {
+					if (j == times) {
+						ex.printStackTrace();
+						testStep.setErrorMsg(ex.getMessage());
+						testStep.setExeStatus(Status.Fail);
+					}
+				}
 			}
 
 			if (testStep.getErrorMsg() != null) {
@@ -151,10 +197,10 @@ public class App {
 
 	private void triggerAction(Object element) throws InterruptedException {
 		Action action = testStep.getAction();
-	
+
 		if (action == Action.wait) {
 			String val = testStep.getInputValue();
-			Long waitSec = StringUtils.isNumeric(val) ? Long.parseLong(val) : Long.valueOf(Cache.getSysCateVal(App.DEFAULT_WAIT_SEC, "10"));
+			Long waitSec = StringUtils.isNumeric(val) ? Long.parseLong(val) : Cache.getSysCateLongVal(App.DEFAULT_WAIT_SEC, "10");
 			Thread.sleep(1000L * waitSec);
 		} else if (action == Action.replace) {
 			String key = getVarsFromContent(testStep.getElement()).iterator().next();
@@ -202,6 +248,9 @@ public class App {
 			case select:
 				new Select(webElement).selectByVisibleText(data);
 				break;
+			case iframe:
+				driver = (RemoteWebDriver) driver.switchTo().frame(webElement);
+				break;
 			case get:
 				String key = getVarsFromContent(data).iterator().next();
 				String val = "";
@@ -212,6 +261,8 @@ public class App {
 					val = webElement.getText();
 				}
 
+				String other = StringUtils.replace(data, key, "");
+				val = StringUtils.replace(val, other, "");
 				currentGetVar = new String[] { key, val };
 				executeContext.put(key, val);
 				break;
@@ -259,7 +310,7 @@ public class App {
 			} catch (Exception ex) {
 
 			}
-			
+
 			if (driver.getTitle().trim().startsWith(windowTitle.trim())) {
 				return;
 			}
@@ -373,7 +424,7 @@ public class App {
 		} finally {
 			try {
 				driver.quit();
-				
+
 			} catch (Exception ee) {
 				try {
 					Runtime.getRuntime().exec("TaskKill /F /IM IEDriverServer.exe");
@@ -434,7 +485,7 @@ public class App {
 			driver.manage().window().setSize(new Dimension(Integer.parseInt(sizes[0]), Integer.parseInt(sizes[1])));
 		}
 
-		driver.manage().timeouts().implicitlyWait(Long.parseLong(Cache.getSysCateVal(IMPLICITLY_WAIT, "30")), TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(Cache.getSysCateLongVal(IMPLICITLY_WAIT, "30"), TimeUnit.SECONDS);
 		return this;
 	}
 

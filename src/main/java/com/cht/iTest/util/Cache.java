@@ -84,7 +84,7 @@ public class Cache {
 		if (isCategoryEmpty(SYSTEM_CATEGORY)) {
 			refreshSysCategory();
 		}
-		
+
 		return myCache.get(SYSTEM_CATEGORY);
 	}
 
@@ -111,7 +111,22 @@ public class Cache {
 		}
 
 		String val = (String) myCache.get(SYSTEM_CATEGORY).get(key);
+		
+		if (StringUtils.isBlank(val) && StringUtils.isBlank(defaultVal)) {
+			return null;
+		}
+		
 		return StringUtils.isBlank(val) ? defaultVal : val;
+	}
+
+	public static Integer getSysCateIntVal(String key, String defaultVal) {
+		String val = getSysCateVal(defaultVal, defaultVal);
+		return StringUtils.isBlank(val) ? null : Integer.valueOf(val);
+	}
+	
+	public static Long getSysCateLongVal(String key, String defaultVal) {
+		String val = getSysCateVal(defaultVal, defaultVal);
+		return StringUtils.isBlank(val) ? null : Long.valueOf(val);
 	}
 
 	public static void refreshSysCategory() {

@@ -34,7 +34,7 @@ public class TestStepExecuteAsyhcnronizer {
 		EventQueue<Event> eq = EventQueues.lookup(workingQueueName);
 
 		eq.subscribe(new EventListener<Event>() {
-			String times = Cache.getSysCateVal(App.RETRY_TIMES, "2");
+			int times = Cache.getSysCateIntVal(App.RETRY_TIMES, "2").intValue();
 
 			private void job() throws Exception {
 				execContextUpdateMap.clear();
@@ -49,12 +49,12 @@ public class TestStepExecuteAsyhcnronizer {
 			@Override
 			public void onEvent(Event event) throws Exception {
 				if (app.getTestStep() != null) {
-					for (int i = 0; i <= Integer.parseInt(times); i++) {
+					for (int i = 0; i <= times; i++) {
 						try {
 							job();
 							break;
 						} catch (Exception ex) {
-							if (i == Integer.parseInt(times)) {
+							if (i == times) {
 								ex.printStackTrace();
 								app.getTestStep().setErrorMsg(ex.getMessage());
 								app.getTestStep().setExeStatus(Status.Fail);

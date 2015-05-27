@@ -41,6 +41,7 @@ import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Window;
 import org.zkoss.zul.theme.Themes;
 
 import com.cht.iTest.entity.TestCase;
@@ -57,6 +58,7 @@ import com.cht.iTest.util.SpringUtils;
 import com.cht.iTest.util.ZKUtils;
 import com.cht.iTest.util.ZKUtils.MessageAction;
 import com.cht.iTest.vm.CopyFromViewModel.Confirm;
+import com.cht.iTest.vm.EasyProcessViewModel.Interact;
 import com.cht.iTest.vm.support.TestPlanExcelParser;
 
 @VariableResolver(org.zkoss.zkplus.spring.DelegatingVariableResolver.class)
@@ -75,11 +77,13 @@ public class TestPlanViewModel implements Serializable {
 	@Wire("#tabs")
 	private Tabs tabs;
 
-	private String driverType = "Internet Explorer";
-	private String driverSize = "FullScreen";
 	private TestPlan testPlan;
 	private TestCase tabName;
 	private TestStep startStep;
+	private Boolean ezTest = Boolean.FALSE;
+	private String driverType = "Internet Explorer";
+	private String driverSize = "FullScreen";
+	private Window easyTestWin;
 
 	@AfterCompose
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) {
@@ -105,13 +109,15 @@ public class TestPlanViewModel implements Serializable {
 	@Command
 	@NotifyChange("driverType")
 	public void selectDriverType(@BindingParam("type") String type) {
-		driverType = type;
+		testPlan.setDriverType(type);
+		setDriverType(type);
 	}
 
 	@Command
 	@NotifyChange("driverSize")
 	public void selectDriverSize(@BindingParam("size") String size) {
-		driverSize = size;
+		testPlan.setDriverSize(size);
+		setDriverSize(size);
 	}
 
 	@Command
@@ -141,6 +147,10 @@ public class TestPlanViewModel implements Serializable {
 	@Command
 	@NotifyChange("testPlan")
 	public void saveTestPlan() {
+		if (easyTestWin != null) {
+			throw new WrongValueException("簡易測試上在執行中，請先關閉!");
+		}
+
 		int index = 0;
 
 		if (tabName != null) {
@@ -229,6 +239,10 @@ public class TestPlanViewModel implements Serializable {
 
 	@Command
 	public void saveAsNewOne() {
+		if (easyTestWin != null) {
+			throw new WrongValueException("簡易測試上在執行中，請先關閉!");
+		}
+
 		DialogTextViewModel.show(new DialogTextViewModel.Action() {
 			@Override
 			public void ok(String value) {
@@ -355,6 +369,10 @@ public class TestPlanViewModel implements Serializable {
 
 	@Command
 	public void uploadTestCase() throws Exception {
+		if (easyTestWin != null) {
+			throw new WrongValueException("簡易測試上在執行中，請先關閉!");
+		}
+		
 		if (testPlan != null) {
 			ZKUtils.msgYN("這項操作會清除當前頁面上所有質料，並顯示您的上傳結果，是否執行?", new MessageAction() {
 				@Override
@@ -380,6 +398,10 @@ public class TestPlanViewModel implements Serializable {
 
 	@Command
 	public void exampleImport() throws Exception {
+		if (easyTestWin != null) {
+			throw new WrongValueException("簡易測試上在執行中，請先關閉!");
+		}
+
 		if (testPlan != null) {
 			ZKUtils.msgYN("這項操作會清除當前頁面上所有資料，並顯示測試範例，是否執行?", new MessageAction() {
 				@Override
@@ -428,17 +450,26 @@ public class TestPlanViewModel implements Serializable {
 
 	@Command
 	public void execute() throws Exception {
+		if (easyTestWin != null) {
+			throw new WrongValueException("簡易測試上在執行中，請先關閉!");
+		}
+		
 		if (StringUtils.isBlank(Cache.getSysCateVal(App.INDEX)) || StringUtils.isBlank(Cache.getSysCateVal(App.SNANSHOT_PATH))) {
 			Messagebox.show("請至【Config】/【 Parameter Setting】設定參數(index、snapshot path)之值");
 			return;
 		}
 
-		ProcessViewModel.show(driverType, driverSize, testPlan, startStep);
+		ProcessViewModel.show(testPlan, startStep);
 	}
 
 	@Command
 	@NotifyChange({ "testPlan" })
 	public void changeCaseExecSeq(@ContextParam(ContextType.TRIGGER_EVENT) DropEvent dropEvt, @BindingParam("index") int index) {
+		if (easyTestWin != null) {
+			dropEvt.stopPropagation();
+			return;
+		}
+
 		Component drag = dropEvt.getDragged();
 		List<TestCase> caseNames = testPlan.getTestCaseDetails();
 
@@ -475,6 +506,11 @@ public class TestPlanViewModel implements Serializable {
 
 	@Command
 	public void changeStepExecSeq(@ContextParam(ContextType.TRIGGER_EVENT) DropEvent drop, @BindingParam("dropObj") TestStep dropObj) {
+		if (easyTestWin != null) {
+			drop.stopPropagation();
+			return;
+		}
+
 		Component parent = drop.getDragged().getParent();
 		int dragIndex = (parent.getChildren().indexOf(drop.getDragged()) - 1);
 		ListModelList<TestStep> current = (ListModelList<TestStep>) tabName.getTestSteps();
@@ -540,6 +576,10 @@ public class TestPlanViewModel implements Serializable {
 	}
 
 	private void importCase() {
+		if (easyTestWin != null) {
+			throw new WrongValueException("簡易測試尚在執行中，請先關閉!");
+		}
+
 		Fileupload.get(new EventListener<UploadEvent>() {
 			@Override
 			public void onEvent(UploadEvent upload) throws Exception {
@@ -553,25 +593,31 @@ public class TestPlanViewModel implements Serializable {
 		});
 	}
 
+	public Window getEasyTestWin() {
+		return easyTestWin;
+	}
+
+	public void setEasyTestWin(Window easyTestWin) {
+		this.easyTestWin = easyTestWin;
+	}
+
 	@Command
 	public void easyStart() {
-		EasyProcessViewModel.show(driverType, driverSize, testPlan);
+		easyTestWin = EasyProcessViewModel.show(testPlan, new Interact() {
+			@Override
+			public void toExit() {
+				easyTestWin = null;
+				ZKUtils.vmRefresh(TestPlanViewModel.this, "easyTestWin");
+			}
+		});
+
+		ZKUtils.vmRefresh(this, "easyTestWin");
 	}
 
-	public String getDriverSize() {
-		return driverSize;
-	}
-
-	public void setDriverSize(String driverSize) {
-		this.driverSize = driverSize;
-	}
-
-	public String getDriverType() {
-		return driverType;
-	}
-
-	public void setDriverType(String driverType) {
-		this.driverType = driverType;
+	@Command
+	public void backToEZTest() {
+		easyTestWin.setVisible(true);
+		easyTestWin.doModal();
 	}
 
 	public TestPlan getTestPlan() {
@@ -588,6 +634,30 @@ public class TestPlanViewModel implements Serializable {
 
 	public void setTabName(TestCase tabName) {
 		this.tabName = tabName;
+	}
+
+	public Boolean getEzTest() {
+		return ezTest;
+	}
+
+	public void setEzTest(Boolean ezTest) {
+		this.ezTest = ezTest;
+	}
+
+	public String getDriverSize() {
+		return driverSize;
+	}
+
+	public void setDriverSize(String driverSize) {
+		this.driverSize = driverSize;
+	}
+
+	public String getDriverType() {
+		return driverType;
+	}
+
+	public void setDriverType(String driverType) {
+		this.driverType = driverType;
 	}
 
 }

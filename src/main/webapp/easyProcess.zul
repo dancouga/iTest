@@ -1,10 +1,14 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <?taglib uri="http://www.cht.com.tw/iTest" prefix="iTest" ?>
 <zk>
-	<window id="processWin" title="測試簡易版" mode="modal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.EasyProcessViewModel')" width="600px" height="600px">
+	<window id="processWin" title="測試簡易版" minimizable="true" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('com.cht.iTest.vm.EasyProcessViewModel')" 
+		width="600px" height="600px">
+		<style>
+			.z-listitem-selected > .z-listcell > .z-listcell-content { color: #F04848; }
+		</style>
 		<borderlayout hflex="1" vflex="1">
-			<west border="none" title="行程變數設定" collapsible="true" splittable="true"  vflex="1">
-				<listbox model="@bind(vm.executeContextParam)" emptyMessage="No Parameter" hflex="1" vflex="1" >
+			<west border="none" title="行程變數設定" collapsible="true" splittable="true" vflex="1">
+				<listbox model="@bind(vm.executeContextParam)" emptyMessage="No Parameter" hflex="1" vflex="1">
 					<listhead>
 						<listheader label="變數名稱" align="center" hflex="1" />
 						<listheader label="賦值" align="center" hflex="2" />
@@ -19,12 +23,12 @@
 					</template>
 				</listbox>
 			</west>
-			<center border="none" title="執行測試結果" vflex="1" >
-				<listbox model="@bind(vm.queue)" hflex="1" vflex="1">
+			<center border="none" title="執行測試結果" vflex="1">
+				<listbox model="@bind(vm.queue)" hflex="1" vflex="1" selectedIndex="@load(vm.startFrom)" onSelect="@command('selectQueue')">
 					<listhead>
 						<listheader label="案例名稱" style="text-align:center" width="180px" />
 						<listheader label="步驟名稱" style="text-align:center" width="180px" />
-						<listheader label="執行狀態" style="text-align:center"  />
+						<listheader label="執行狀態" style="text-align:center" />
 					</listhead>
 					<template name="model">
 						<listitem>
@@ -37,7 +41,8 @@
 			</center>
 			<south border="none">
 				<toolbar hflex="1" align="center">
-					<button label="開始" image="/imgs/start.png"  onClick="@command('start')" />
+					<button label="重新開始" image="/imgs/start.png" onClick="@command('start')" />
+					<button label="繼續" onClick="@command('startFromSelect')" visible="@load(vm.fail)" disabled="@load(vm.fail and vm.startFrom eq null)" />
 					<button label="離開" image="/imgs/exit.png" disabled="@load(vm.run)" onClick="@command('exit')" />
 				</toolbar>
 			</south>

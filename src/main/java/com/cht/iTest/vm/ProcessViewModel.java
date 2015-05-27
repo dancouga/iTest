@@ -54,8 +54,6 @@ public class ProcessViewModel implements Serializable {
 
 	public static final String ZUL = "//process.zul";
 	public static final String PARAM_TEST_PLAN = "testPlan";
-	public static final String PARAM_DRIVER_TYPE = "driverType";
-	public static final String PARAM_DRIVER_SIZE = "driverSize";
 	public static final String PARAM_START_STEP = "startStep";
 	public static final String PARAM_LAST_EXECVALS_CONTEXT = "PARAM_LAST_EXECVALS_CONTEXT";
 
@@ -86,8 +84,8 @@ public class ProcessViewModel implements Serializable {
 	public void init() {
 		Map<?, ?> args = Executions.getCurrent().getArg();
 		TestPlan testPlan = (TestPlan) args.get(PARAM_TEST_PLAN);
-		driverType = (String) args.get(PARAM_DRIVER_TYPE);
-		driverSize = (String) args.get(PARAM_DRIVER_SIZE);
+		driverType = testPlan.getDriverType();
+		driverSize = testPlan.getDriverSize();
 		startStep = (TestStep) args.get(PARAM_START_STEP);
 
 		Set<String> vars = new LinkedHashSet<String>();
@@ -165,7 +163,7 @@ public class ProcessViewModel implements Serializable {
 		allExecVars.addAll(vars);
 	}
 
-	public static void show(String driverType, String driverSize, TestPlan testPlan, TestStep startStep) {
+	public static void show(TestPlan testPlan, TestStep startStep) {
 		Window window = (Window) Executions.createComponents(ZUL, null, ZKUtils.argBuilder().put(PARAM_TEST_PLAN, testPlan).put(PARAM_START_STEP, startStep).build());
 		window.addEventListener(Events.ON_MAXIMIZE, new EventListener<MaximizeEvent>() {
 			@Override

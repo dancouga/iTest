@@ -2,7 +2,6 @@
 <?taglib uri="http://www.cht.com.tw/iTest" prefix="iTest" ?>
 <?component name="copyright" macroURI="/copyright.zul" ?>
 <zk>
-
 	<style>
 	.z-tab-text {
 		font-size: 14px;
@@ -13,6 +12,8 @@
     }
     
     .z-window-header{
+    	font-weight: bold;
+    	color:green;
     	font-size: 14px;
     }
 	</style>
@@ -31,7 +32,7 @@
 						<menuitem label="儲存" image="/imgs/save.png" disabled="@load(vm.testPlan eq null)" onClick="@command('saveTestPlan')" />
 						<menuitem label="另存新檔" image="/imgs/save.png" disabled="@load(vm.testPlan eq null)" onClick="@command('saveAsNewOne')" />
 						<menuitem label="清除" image="/imgs/deleteAll.png" disabled="@load(vm.testPlan eq null)" onClick="@command('clearAllCase')" />
-						<menuitem label="TestPlan EasyBuilder" image="/imgs/DocDesign.png" disabled="@load(vm.testPlan eq null)" onClick="@command('copyFrom')" />
+						<menuitem label="TestPlan EasyBuilder" image="/imgs/DocDesign.png" disabled="@load(vm.testPlan eq null or vm.easyTestWin ne null)" onClick="@command('copyFrom')" />
 					</menupopup>
 				</menu>
 				<menu image="/imgs/setting.png" label="設定">
@@ -70,6 +71,7 @@
 				</menu>
 				<menuitem label="Embedded DB" onClick="@command('linkToH2')" />
 				<menuitem visible="@load(vm.testPlan ne null)" label="@load(vm.testPlan.name)" style="border:black 1px solid;" context="editPlan" />
+				<menuitem label="簡易測試" onClick="@command('backToEZTest')" style="border:black 1px solid;" visible="@load(vm.easyTestWin ne null)"/>
 			</menubar>
 		</north>
 		<center>
@@ -79,10 +81,10 @@
 						<tab selected="@load(each eq vm.tabName)" label="@load(each.name)" draggable="case" droppable="case,step"
 							onDrop="@command('changeCaseExecSeq', drop=event, index=forEachStatus.index)" onClick="@command('tabName', testCase=each)" 
 							onClose="@command('reomveCase', index=forEachStatus.index, evt=event)"
-							closable="true" context="editCase" onRightClick="@command('tabName', testCase=each)" />
+							closable="@load(vm.easyTestWin eq null)" context="editCase" onRightClick="@command('tabName', testCase=each)" />
 					</template>
 				</tabs>
-				<toolbar visible="@load(vm.testPlan ne null)">
+				<toolbar visible="@load(vm.testPlan ne null and vm.easyTestWin eq null)">
 					<menupopup id="editPlan">
 						<menuitem label="修改計畫名稱" image="/imgs/edit.png" onClick="@command('modifyTestPlan',modifyType='update')" />
 					</menupopup>
@@ -92,7 +94,7 @@
 					<menupopup id="startFromMe">
 						<menuitem label="承接上次測試變數資料由此步驟開始" image="/imgs/play.png" onClick="@command('execute')" />
 					</menupopup>
-					<button label="簡易測試" image="/imgs/start.png" onClick="@command('easyStart')" />
+					<button label="簡易測試" image="/imgs/start.png" onClick="@command('easyStart')" disabled="@load(vm.easyTestWin ne null)"/>
 					<button label="新增步驟" onClick="@command('createTestStep')" />
 					<button label="刪除步驟" onClick="@command('deleteTestSteps')" />
 					<button label="新增案例" image="/imgs/add.png" onClick="@command('modifyTestCase',modifyType='create')" />
@@ -158,5 +160,4 @@
 			<copyright hflex="1" />
 		</south>
 	</borderlayout>
-
 </zk>
